@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/weeek-api-sdk.svg)](https://www.npmjs.com/package/weeek-api-sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/croissanstudio/weeek-api-sdk/release.yml?branch=main)](https://github.com/croissanstudio/weeek-api-sdk/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/CroissanStudioDev/weeek_api_typescript/release.yml?branch=main)](https://github.com/CroissanStudioDev/weeek_api_typescript/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-4.9%2B-blue)](https://www.typescriptlang.org/)
 
 A modern, type-safe SDK for the Weeek API, built with TypeScript to provide an intuitive and developer-friendly interface to Weeek's CRM functionality.
