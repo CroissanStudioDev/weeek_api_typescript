@@ -32,12 +32,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/croissanstudio/weeek-api-sdk.git"
+    "url": "https://github.com/CroissanStudioDev/weeek_api_typescript"
   },
   "bugs": {
-    "url": "https://github.com/croissanstudio/weeek-api-sdk/issues"
+    "url": "https://github.com/CroissanStudioDev/weeek_api_typescript/issues"
   },
-  "homepage": "https://github.com/croissanstudio/weeek-api-sdk#readme",
+  "homepage": "https://github.com/CroissanStudioDev/weeek_api_typescript#readme",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
