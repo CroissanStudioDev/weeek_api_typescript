@@ -1,27 +1,80 @@
 # Weeek API TypeScript SDK
 
-A TypeScript SDK for interacting with the Weeek API, focusing on CRM functionality.
+[![npm version](https://img.shields.io/npm/v/weeek-api-sdk.svg)](https://www.npmjs.com/package/weeek-api-sdk)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/croissanstudio/weeek-api-sdk/release.yml?branch=main)](https://github.com/croissanstudio/weeek-api-sdk/actions)
+[![TypeScript](https://img.shields.io/badge/TypeScript-4.9%2B-blue)](https://www.typescriptlang.org/)
 
-## Installation
+A modern, type-safe SDK for the Weeek API, built with TypeScript to provide an intuitive and developer-friendly interface to Weeek's CRM functionality.
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [API Reference](#-api-reference)
+  - [Funnels](#funnels)
+  - [Organizations](#organizations)
+  - [Contacts](#contacts)
+  - [Deals](#deals)
+  - [Statuses](#statuses)
+- [Examples](#-examples)
+- [Error Handling](#-error-handling)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+## ✨ Features
+
+- **Fully Typed** - TypeScript definitions for all API responses and requests
+- **Promise-Based** - Modern async/await syntax for all API calls
+- **Comprehensive** - Support for all major Weeek CRM endpoints
+- **Error Handling** - Detailed error messages and proper error handling
+- **Zero Dependencies** - Only requires axios for HTTP requests
+- **IDE Support** - Full IntelliSense and code completion in modern IDEs
+- **Documented** - Extensive documentation with examples
+
+## 🚀 Installation
 
 ```bash
+# Using npm
 npm install weeek-api-sdk
-# or
+
+# Using yarn
 yarn add weeek-api-sdk
+
+# Using pnpm
+pnpm add weeek-api-sdk
 ```
 
-## Usage
-
-### Creating a client
+## 🏁 Quick Start
 
 ```typescript
 import { createWeekCRMClient } from 'weeek-api-sdk';
 
 // Create a client instance with your API token
 const client = createWeekCRMClient('your-api-token');
+
+// Example: Creating a new funnel
+async function createSalesFunnel() {
+  try {
+    const response = await client.createFunnel({
+      name: 'Sales Pipeline',
+      isPrivate: false
+    });
+    
+    console.log('Funnel created:', response.funnel);
+    return response.funnel;
+  } catch (error) {
+    console.error('Error creating funnel:', error);
+  }
+}
 ```
 
-### Working with Funnels
+## 📖 API Reference
+
+The SDK provides a comprehensive set of methods for interacting with the Weeek API. All methods return promises that resolve to typed response objects.
+
+### Funnels
 
 ```typescript
 // Get all funnels
@@ -45,7 +98,7 @@ await client.updateFunnel('funnel-id', {
 await client.deleteFunnel('funnel-id');
 ```
 
-### Working with Organizations
+### Organizations
 
 ```typescript
 // Get all organizations
@@ -70,7 +123,7 @@ await client.updateOrganization('organization-id', {
 await client.deleteOrganization('organization-id');
 ```
 
-### Working with Contacts
+### Contacts
 
 ```typescript
 // Get all contacts
@@ -95,7 +148,7 @@ await client.updateContact('contact-id', {
 await client.deleteContact('contact-id');
 ```
 
-### Working with Deals
+### Deals
 
 ```typescript
 // Get all deals
@@ -129,7 +182,7 @@ await client.moveDeal('deal-id', 'new-status-id');
 await client.deleteDeal('deal-id');
 ```
 
-### Working with Statuses
+### Statuses
 
 ```typescript
 // Get all statuses
@@ -142,48 +195,87 @@ const { statuses } = await client.getFunnelStatuses('funnel-id');
 const { statuses } = await client.getAllStatusesWithFunnels();
 ```
 
-## API Reference
+## 📝 Examples
 
-The SDK provides typed interfaces for all request and response objects to enable full IntelliSense support in your IDE.
+### Managing a Complete Sales Process
 
-### CRM Client Methods
+```typescript
+async function manageSalesProcess() {
+  // Create a sales funnel
+  const { funnel } = await client.createFunnel({
+    name: 'Q3 Sales Pipeline',
+    isPrivate: false
+  });
+  
+  // Get the default status
+  const { statuses } = await client.getFunnelStatuses(funnel.id);
+  const initialStatus = statuses[0];
+  
+  // Create a potential client organization
+  const { organization } = await client.createOrganization({
+    name: 'TechCorp Inc.',
+    emails: ['info@techcorp.com']
+  });
+  
+  // Create a contact at the organization
+  const { contact } = await client.createContact({
+    firstName: 'Jane',
+    lastName: 'Smith',
+    emails: ['jane.smith@techcorp.com'],
+    organizations: [organization.id]
+  });
+  
+  // Create a deal in the initial status
+  const { deal } = await client.createDeal(initialStatus.id, {
+    title: 'Enterprise License Deal',
+    amount: 25000,
+    organizations: [organization.id],
+    contacts: [contact.id]
+  });
+  
+  console.log('Created full sales process with:', {
+    funnel: funnel.name,
+    organization: organization.name,
+    contact: `${contact.firstName} ${contact.lastName}`,
+    deal: deal.title
+  });
+  
+  return { funnel, organization, contact, deal };
+}
+```
 
-- **Funnels**
-  - `createFunnel(data)`
-  - `getAllFunnels()`
-  - `getFunnel(funnelId)`
-  - `updateFunnel(funnelId, data)`
-  - `deleteFunnel(funnelId)`
+## 🔧 Error Handling
 
-- **Organizations**
-  - `createOrganization(data)`
-  - `getAllOrganizations()`
-  - `getOrganization(organizationId)`
-  - `updateOrganization(organizationId, data)`
-  - `deleteOrganization(organizationId)`
+The SDK provides detailed error information for all API calls:
 
-- **Contacts**
-  - `createContact(data)`
-  - `getAllContacts()`
-  - `getContact(contactId)`
-  - `updateContact(contactId, data)`
-  - `deleteContact(contactId)`
+```typescript
+try {
+  const response = await client.getFunnel('non-existent-id');
+} catch (error) {
+  if (error.response) {
+    // The request was made and the server responded with an error status
+    console.error('API Error:', error.response.data.message);
+    console.error('Status Code:', error.response.status);
+  } else if (error.request) {
+    // The request was made but no response was received
+    console.error('Network Error:', error.message);
+  } else {
+    // Something else went wrong
+    console.error('Error:', error.message);
+  }
+}
+```
 
-- **Deals**
-  - `validateStatus(statusId)`
-  - `createDealWithValidation(statusId, data)`
-  - `createDeal(statusId, data)`
-  - `getAllDeals()`
-  - `getDeal(dealId)`
-  - `updateDeal(dealId, data)`
-  - `deleteDeal(dealId)`
-  - `moveDeal(dealId, statusId)`
+## 👥 Contributing
 
-- **Statuses**
-  - `getAllStatuses()`
-  - `getFunnelStatuses(funnelId)`
-  - `getAllStatusesWithFunnels()`
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-MIT
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
